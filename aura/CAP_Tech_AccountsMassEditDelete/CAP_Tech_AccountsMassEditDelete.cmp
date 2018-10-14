@@ -1,0 +1,148 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global" controller="CAP_Tech_AccountListView_Ctrl">
+    <aura:attribute name="accounts" type="List" description="attribute to store list of accounts returned from apex controller."/>
+    <aura:attribute name="accountsMapJson" type="String"/>
+    <aura:attribute name="selectedAccountIds" type="List"/>
+    <aura:attribute name="selectedAccountNames" type="List"/>
+    <aura:attribute name="accountSourceMap" type="List"/>
+    <aura:attribute name="selectedAccountSource" type="String"/>
+    <aura:attribute name="loadedEditForm" type="boolean" default="false"/>
+    <aura:handler name="init" value="{! this}" action="{! c.doInit}"/>
+    <lightning:card title="Accounts" iconName="standard:account">
+        <aura:set attribute="actions">
+            <lightning:button variant="brand" label="Update Account Source" onclick="{! c.updateAccountSourceModal}"/>
+            <lightning:button variant="destructive" label="Delete" onclick="{! c.handleDeleteModal}"/>
+        </aura:set>
+        <div style="height: 300px">
+            <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-scrollable_y">
+                <thead>
+                    <tr class="slds-text-heading--label">   
+                        <th scope="col" class="slds-cell-wrap" title="Account Name">
+                            <div class="slds-truncate">Selected</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Account Name">
+                            <div class="slds-truncate">Account Name</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Account Number">
+                            <div class="slds-truncate">Account Number</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Account Owner">
+                            <div class="slds-truncate">Account Owner</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Account Source">
+                            <div class="slds-truncate">Account Source</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Annual Revenue">
+                            <div class="slds-truncate">Annual Revenue</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Type">
+                            <div class="slds-truncate">Type</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Industry">
+                            <div class="slds-truncate">Industry</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Created By">
+                            <div class="slds-truncate">Created By</div>                      
+                        </th>
+                    </tr>
+                </thead> 
+                <tbody>
+                    <aura:iteration items="{!v.accounts}" var="acc">
+                        <tr>
+                            <td class="slds-truncate">
+                                <ui:inputCheckbox aura:id="checkbox" name="{!acc.Id}"/>           
+                            </td>
+                            <td class="slds-truncate" title="{!acc.Name}" onclick="{! c.navigateToAccount}" data-recordId="{! acc.Id}">
+                                <a><lightning:formattedText value="{!acc.Name}"/></a>            
+                            </td> 
+                            <td class="slds-truncate" title="{!acc.AccountNumber}">
+                                <lightning:formattedText value="{!acc.AccountNumber}"/>            
+                            </td> 
+                            <td class="slds-truncate" title="{!acc.Owner.Name}">
+                                <lightning:formattedText value="{!acc.Owner.Name}"/>            
+                            </td>
+                            <td class="slds-truncate" title="{!acc.AccountSource}">
+                                <lightning:formattedText value="{!acc.AccountSource}"/>            
+                            </td>
+                            <td class="slds-truncate" title="{!acc.AnnualRevenue}">
+                                <ui:outputCurrency value="{!acc.AnnualRevenue}"/>        
+                            </td> 
+                            <td class="slds-truncate" title="{!acc.Type}">
+                                <lightning:formattedText value="{!acc.Type}"/>            
+                            </td>
+                            <td class="slds-truncate" title="{!acc.Industry}">
+                                <lightning:formattedText value="{!acc.Industry}"/>            
+                            </td>
+                            <td class="slds-truncate" title="{!acc.CreatedBy.Name}">
+                                <lightning:formattedText value="{!acc.CreatedBy.Name}"/>            
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+    </lightning:card>
+    <div aura:id="updateAccountSourceModal" class="slds-hide" style="height: 800px;">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-03" aria-modal="true" aria-describedby="modal-content-id-3" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+                    <lightning:card iconName="action:edit" title="Update Accounts">
+                        <div class="slds-p-horizontal--small">
+                            <lightning:select name="select1" label="Account Source" value="{! v.selectedAccountSource}">
+                                <option value="">--None--</option>
+                                <aura:iteration items="{!v.accountSourceMap}" var="option">
+                                    <option value="{! option.key}">{! option.value}</option>
+                                </aura:iteration>
+                            </lightning:select>
+                        </div>
+                    </lightning:card>
+                    
+                    <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-scrollable_y">
+                        <caption>Selected Accounts</caption>
+                        <thead>
+                            <tr class="slds-text-heading--label">   
+                                <th scope="col" class="slds-cell-wrap" title="Account Name">
+                                    <div class="slds-truncate">Account Name</div>                      
+                                </th>
+                            </tr>
+                        </thead> 
+                        <tbody>
+                            <aura:iteration items="{!v.selectedAccountNames}" var="name">
+                                <tr>
+                                    <td class="slds-truncate" title="{!name}">
+                                        <lightning:formattedText value="{!name}"/>          
+                                    </td>
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" data-modalName="updateAccountSourceModal" onclick="{! c.handleCancel}" >Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick="{! c.handleUpdateAccounts}">Update</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    <div aura:id="confirmDeleteModal" class="slds-hide" style="height: 240px;">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-02" aria-modal="true" aria-describedby="modal-content-id-2" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+                    <lightning:card iconName="action:delete" title="Delete Accounts">
+                        <div class="slds-p-horizontal--small">
+                            Are you sure you want to delete selected Accounts?
+                        </div>
+                    </lightning:card>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" data-modalName="confirmDeleteModal" onclick="{! c.handleCancel}" >Cancel</button>
+                    <button class="slds-button slds-button_destructive" onclick="{! c.handleDeleteAccounts}">Delete</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    <aura:if isTrue="{! v.loadedEditForm }">
+        <lightning:spinner alternativeText="Loading" />
+    </aura:if>
+</aura:component>

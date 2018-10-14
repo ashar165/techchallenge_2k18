@@ -1,0 +1,119 @@
+<aura:component controller="CAP_Tech_AccountListView_Ctrl" implements="flexipage:availableForRecordHome,flexipage:availableForAllPageTypes">
+    <aura:attribute name="accounts" type="List" description="attribute to store list of accounts returned from apex controller."/>
+    <aura:attribute name="selectedAccount" type="Account"/>
+    <aura:handler name="init" value="{! this}" action="{! c.doInit}"/>
+    <ui:scrollerWrapper class="scrollerSize">
+        <div style="height: 300px">
+            <table class="slds-table slds-table_fixed-layout slds-table_bordered slds-scrollable_y">
+                <thead>
+                    <tr class="slds-text-heading--label">                  
+                        <th scope="col" class="slds-cell-wrap" title="Account Name">
+                            <div class="slds-truncate">Account Name</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Account Number">
+                            <div class="slds-truncate">Account Number</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Account Owner">
+                            <div class="slds-truncate">Account Owner</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Account Source">
+                            <div class="slds-truncate">Account Source</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Annual Revenue">
+                            <div class="slds-truncate">Annual Revenue</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Type">
+                            <div class="slds-truncate">Type</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Industry">
+                            <div class="slds-truncate">Industry</div>                      
+                        </th>
+                        <th scope="col" class="slds-cell-wrap" title="Created By">
+                            <div class="slds-truncate">Created By</div>                      
+                        </th>
+                    </tr>
+                </thead> 
+                <tbody>
+                    <aura:iteration items="{!v.accounts}" var="acc">
+                        <tr>
+                            <td class="slds-truncate" title="{!acc.Name}" onclick="{! c.showAccDetails}" data-recordId="{! acc.Id}">
+                                <a><lightning:formattedText value="{!acc.Name}"/></a>            
+                            </td> 
+                            <td class="slds-truncate" title="{!acc.AccountNumber}">
+                                <lightning:formattedText value="{!acc.AccountNumber}"/>            
+                            </td> 
+                            <td class="slds-truncate" title="{!acc.Owner.Name}">
+                                <lightning:formattedText value="{!acc.Owner.Name}"/>            
+                            </td>
+                            <td class="slds-truncate" title="{!acc.AccountSource}">
+                                <lightning:formattedText value="{!acc.AccountSource}"/>            
+                            </td>
+                            <td class="slds-truncate" title="{!acc.AnnualRevenue}">
+                                <ui:outputCurrency value="{!acc.AnnualRevenue}"/>        
+                            </td> 
+                            <td class="slds-truncate" title="{!acc.Type}">
+                                <lightning:formattedText value="{!acc.Type}"/>            
+                            </td>
+                            <td class="slds-truncate" title="{!acc.Industry}">
+                                <lightning:formattedText value="{!acc.Industry}"/>            
+                            </td>
+                            <td class="slds-truncate" title="{!acc.CreatedBy.Name}">
+                                <lightning:formattedText value="{!acc.CreatedBy.Name}"/>            
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+    </ui:scrollerWrapper>
+    <div class="slds-box">
+        <aura:if isTrue="{! not(empty(v.selectedAccount))}">
+            <lightning:tile label="Account">
+                <aura:set attribute="media">
+                    <lightning:icon iconName="standard:account"/>
+                </aura:set>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Account Name</span> : <ui:outputtext value="{! v.selectedAccount.Name}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Account Number</span> : <ui:outputtext value="{! v.selectedAccount.AccountNumber}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Account Owner</span> : <ui:outputtext value="{! v.selectedAccount.Owner.Name}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Account Source</span> : <ui:outputtext value="{! v.selectedAccount.AccountSource}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Parent Account</span> : <ui:outputtext value="{! v.selectedAccount.Parent.Name}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Annual Revenue</span> : <ui:outputCurrency value="{! v.selectedAccount.AnnualRevenue}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Type</span> : <ui:outputtext value="{! v.selectedAccount.Type}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Industry</span> : <ui:outputtext value="{! v.selectedAccount.Industry}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Description</span> : <ui:outputtext value="{! v.selectedAccount.Description}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Phone</span> : <lightning:formattedPhone value="{! v.selectedAccount.Phone}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Fax</span> : <lightning:formattedPhone value="{! v.selectedAccount.Fax}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Created By</span> : <ui:outputtext value="{! v.selectedAccount.CreatedBy.Name}"/>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <span class="bolder">Last Modified By</span> : <ui:outputtext value="{! v.selectedAccount.LastModifiedBy.Name}"/>
+                    </div>
+                </div>
+            </lightning:tile>
+        </aura:if>
+    </div>
+</aura:component>
